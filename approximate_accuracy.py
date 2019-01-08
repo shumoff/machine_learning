@@ -57,7 +57,7 @@ def estimate():
     square_incorrect = 0
     square_signals = 0
     counter = 0
-    with open("transport_output_1.txt", 'r') as f:
+    with open("transport_output.txt", 'r') as f:
         for row in f.read():
             if row != '\n':
                 unknown_set["signals"][counter]['label'] = int(row)
