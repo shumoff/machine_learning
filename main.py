@@ -20,7 +20,7 @@ def main():
     answers.index = range(len(answers))
     target_dataset.index = range(len(target_dataset))
 
-    model = RandomForestClassifier(n_estimators=396, max_depth=401)
+    model = RandomForestClassifier(n_estimators=536, max_depth=201)
     model.fit(X=training_dataset, y=answers)
     predictions = model.predict(target_dataset)
 
