@@ -1,4 +1,5 @@
 import pandas as pd
+import approximate_accuracy
 from sklearn.ensemble import RandomForestClassifier
 
 pd.options.mode.chained_assignment = None
@@ -20,13 +21,14 @@ def main():
     answers.index = range(len(answers))
     target_dataset.index = range(len(target_dataset))
 
-    model = RandomForestClassifier(n_estimators=536, max_depth=201)
+    model = RandomForestClassifier(n_estimators=536, max_depth=201, random_state=17)
     model.fit(X=training_dataset, y=answers)
     predictions = model.predict(target_dataset)
 
     with open('transport_output.txt', 'w') as f:
         for prediction in predictions:
             f.write(prediction + "\n")
+    print('Deviation: ', approximate_accuracy.deviation())
 
 
 if __name__ == '__main__':

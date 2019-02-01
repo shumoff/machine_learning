@@ -101,9 +101,10 @@ def estimate():
     df = pd.read_csv('transport_data.csv')
     reference_proportion = df[df['label'] != '?'][df['label'] != '-']['label'].value_counts(normalize=True)
     print(reference_proportion)
-    reference_proportion_0 = reference_proportion[0]
-    reference_proportion_1 = reference_proportion[1]
-    reference_proportion_2 = reference_proportion[2]
+    proportions = list(reference_proportion)
+    # reference_proportion_0 = reference_proportion[0]
+    # reference_proportion_1 = reference_proportion[1]
+    # reference_proportion_2 = reference_proportion[2]
 
     count_0 = 0
     count_1 = 0
@@ -119,6 +120,9 @@ def estimate():
     proportion_0 = count_0 / 5000
     proportion_1 = count_1 / 5000
     proportion_2 = count_2 / 5000
+    proportions.append(proportion_0)
+    proportions.append(proportion_1)
+    proportions.append(proportion_2)
     print('0 proportion: ', proportion_0, '\n1 proportion: ', proportion_1, '\n2 proportion: ', proportion_2)
 
     plotting(longitude_0, latitude_0, 'b.', 0.2)
@@ -130,7 +134,17 @@ def estimate():
     print("Correct: ", square_correct)
     print("Incorrect: ", square_incorrect)
     print("Ratio: ", ratio)
-    return ratio
+    return ratio, proportions
 
 
-estimate()
+def deviation():
+    ratio, props = estimate()
+    euclid = ((props[0] - props[3]) / (props[0] + props[3])) ** 2 + \
+             ((props[1] - props[4]) / (props[1] + props[4])) ** 2 + \
+             ((props[2] - props[5]) / (props[2] + props[5])) ** 2 + \
+             ((1 - ratio) / (1 + ratio)) ** 2
+    return euclid
+
+
+if __name__ == '__main__':
+    estimate()
