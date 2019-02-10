@@ -8,8 +8,6 @@ x_2_list = [30.315, 30.305, 30.305, 30.42, 30.315]
 y_1_list = [59.93, 59.925, 59.942, 59.921, 59.937]
 y_2_list = [59.936, 59.958, 59.955, 59.943, 59.943]
 
-unknown_set = {"signals": []}
-
 
 def square_plot(x_1, x_2, y_1, y_2, format_):
     v_y = np.arange(y_1, y_2, 0.0001)
@@ -39,8 +37,9 @@ def plotting(x, y, format_, alpha):
     plt.show()
 
 
-def estimate():
+def estimate(predictions=None):
     unknown_signals = []
+    unknown_set = {"signals": []}
     with open("transport_data.csv") as f:
         reader = csv.reader(f)
         for row in reader:
@@ -57,34 +56,40 @@ def estimate():
     square_incorrect = 0
     square_signals = 0
     counter = 0
-    with open("transport_output.txt", 'r') as f:
-        for row in f.read():
-            if row != '\n':
-                unknown_set["signals"][counter]['label'] = int(row)
-                unknown_signals.append(int(row))
-                counter += 1
+    if predictions is not None:
+        for prediction in predictions:
+            unknown_set["signals"][counter]['label'] = int(prediction)
+            unknown_signals.append(int(prediction))
+            counter += 1
+    else:
+        with open("transport_output.txt", 'r') as f:
+            for row in f.read():
+                if row != '\n':
+                    unknown_set["signals"][counter]['label'] = int(row)
+                    unknown_signals.append(int(row))
+                    counter += 1
 
     for counter, value in enumerate(unknown_set["signals"]):
         # сначала проверка на попадание в места локализации
         # blue
         if (x_1_list[0] < value["longitude"] < x_2_list[0]) and (y_1_list[0] < value["latitude"] < y_2_list[0]):
-            longitude_0.append(value["longitude"])
-            latitude_0.append(value["latitude"])
+            # longitude_0.append(value["longitude"])
+            # latitude_0.append(value["latitude"])
             square_signals += 1
             if unknown_signals[counter] != 0:
                 square_incorrect += 1
         # red
         elif ((x_1_list[2] < value["longitude"] < x_2_list[2]) and (y_1_list[2] < value["latitude"] < y_2_list[2])) or \
                 ((x_1_list[3] < value["longitude"] < x_2_list[3]) and (y_1_list[3] < value["latitude"] < y_2_list[3])):
-            longitude_2.append(value["longitude"])
-            latitude_2.append(value["latitude"])
+            # longitude_2.append(value["longitude"])
+            # latitude_2.append(value["latitude"])
             square_signals += 1
             if unknown_signals[counter] != 2:
                 square_incorrect += 1
         # green
         elif (x_1_list[1] < value["longitude"] < x_2_list[1]) and (y_1_list[1] < value["latitude"] < y_2_list[1]):
-            longitude_1.append(value["longitude"])
-            latitude_1.append(value["latitude"])
+            # longitude_1.append(value["longitude"])
+            # latitude_1.append(value["latitude"])
             square_signals += 1
             if unknown_signals[counter] != 1:
                 square_incorrect += 1
@@ -100,7 +105,7 @@ def estimate():
 
     df = pd.read_csv('transport_data.csv')
     reference_proportion = df[df['label'] != '?'][df['label'] != '-']['label'].value_counts(normalize=True)
-    print(reference_proportion)
+    # print(reference_proportion)
     proportions = list(reference_proportion)
     # reference_proportion_0 = reference_proportion[0]
     # reference_proportion_1 = reference_proportion[1]
@@ -123,22 +128,21 @@ def estimate():
     proportions.append(proportion_0)
     proportions.append(proportion_1)
     proportions.append(proportion_2)
-    print('0 proportion: ', proportion_0, '\n1 proportion: ', proportion_1, '\n2 proportion: ', proportion_2)
-
-    plotting(longitude_0, latitude_0, 'b.', 0.2)
-    plotting(longitude_1, latitude_1, 'g.', 0.2)
-    plotting(longitude_2, latitude_2, 'r.', 0.2)
+    # print('0 proportion: ', proportion_0, '\n1 proportion: ', proportion_1, '\n2 proportion: ', proportion_2)
+    # plotting(longitude_0, latitude_0, 'b.', 0.2)
+    # plotting(longitude_1, latitude_1, 'g.', 0.2)
+    # plotting(longitude_2, latitude_2, 'r.', 0.2)
     square_correct = square_signals - square_incorrect
     ratio = square_correct / square_signals
-    print("Total: ", square_signals)
-    print("Correct: ", square_correct)
-    print("Incorrect: ", square_incorrect)
-    print("Ratio: ", ratio)
+    # print("Total: ", square_signals)
+    # print("Correct: ", square_correct)
+    # print("Incorrect: ", square_incorrect)
+    # print("Ratio: ", ratio)
     return ratio, proportions
 
 
-def deviation():
-    ratio, props = estimate()
+def deviation(predictions=None):
+    ratio, props = estimate(predictions)
     euclid = ((props[0] - props[3]) / (props[0] + props[3])) ** 2 + \
              ((props[1] - props[4]) / (props[1] + props[4])) ** 2 + \
              ((props[2] - props[5]) / (props[2] + props[5])) ** 2 + \

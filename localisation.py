@@ -88,7 +88,6 @@ def estimate():
             square_signals += 1
             if unknown_signals[counter] != 2:
                 print(counter + 1)
-                print('I HERE 2')
                 square_incorrect += 1
                 unknown_signals[counter] = 2
             # else:
@@ -99,7 +98,6 @@ def estimate():
             latitude_1.append(value["latitude"])
             square_signals += 1
             if unknown_signals[counter] != 1:
-                print('I HERE 1')
                 print(counter + 1)
                 square_incorrect += 1
                 unknown_signals[counter] = 1
